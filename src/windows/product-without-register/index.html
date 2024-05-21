@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KPV Tech Solutions App</title>
+    <link rel="stylesheet" href="../../assets/css/tailstyles.css" />
+</head>
+<body class="dark:bg-gray-900">
+<div >
+    <section class="bg-white dark:bg-gray-900">
+        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+            <div class="rounded p-1 mb-3 flex justify-center">
+                <h2 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">Vender Producto</h2>
+            </div>
+
+            <form action="#">
+                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                    <div class="sm:col-span-2">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del Producto</label>
+                        <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Nombre del product" required="">
+                    </div>
+                    <div class="w-full">
+                        <label for="price-neto" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cantidad</label>
+                        <input type="number" name="brand" id="price-neto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Cantidad" required="">
+                    </div>
+                    <div class="w-full">
+                        <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Precio Venta</label>
+                        <input type="number" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Precio Venta" required="">
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                    Add product
+                </button>
+                <button id="button-close" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-red-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </section>
+</div>
+
+
+<script src="renderer.js"></script>
+</body>
+</html>
