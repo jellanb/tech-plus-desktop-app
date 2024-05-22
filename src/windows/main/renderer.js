@@ -169,7 +169,6 @@ function changeContent(contentElementId, navButtonId) {
                 const targetModal = document.getElementById('default-modal');
                 if (targetModal) {
                     targetModal.classList.toggle('hidden');
-                    targetModal.classList.toggle('flex');
                 }
                 return;
             };
