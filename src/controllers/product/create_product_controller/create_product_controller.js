@@ -29,7 +29,7 @@ function generateNewProduct(productData) {
         price: productData.price,
         wholesale_price: productData.wholesalePrice,
         discount_enable: false,
-        id_category: 0,//TODO: find this value productData.id_category,
+        id_category: productData.category,//TODO: find this value productData.id_category,
         discount_unique_id: 0,//productData.discount_unique_id,
         discount_pack_id: 0,//productData.discount_pack_id,
         discount_bundle_id: 0 // productData.discount_bundle_id

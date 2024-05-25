@@ -6,7 +6,5 @@ contextBridge.exposeInMainWorld('action', {
     openWindow: (windowPath, width, height) => {
         ipcRenderer.send('open-new-window', windowPath, width, height)
     },
-    addProduct: (operation, data) => {
-        ipcRenderer.send('crud-operations', operation, data);
-    }
+    addProduct: (operation, data) => ipcRenderer.invoke('crud-operations', operation, data)
 });

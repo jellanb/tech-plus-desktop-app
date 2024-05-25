@@ -27,13 +27,15 @@ function createDataBase() {
 
 function createSelectQuery(tableName, condition) {
     const query = `SELECT * FROM ${tableName} WHERE ${condition}`;
+    return new Promise((resolve, reject) => {
+        database.all(query, [], (err, rows) => {
+            if (err) {
+                reject(error.newError(err, error.ErrorType.SqliteException, `Error finding ${tableName}: ${err.message}`));
+            }
+            resolve(rows);
+        });
+    })
 
-    database.all(query, [], (err, rows) => {
-        if (err) {
-            return error.newError(err, error.ErrorType.SqliteException, `Error finding ${tableName}: ${err.message}`);
-        }
-        return rows
-    });
 }
 
 async function createInsertQuery(tableName, fields, values) {

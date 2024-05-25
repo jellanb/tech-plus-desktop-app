@@ -43,12 +43,21 @@ document.getElementById('nav-item-cutoff').addEventListener('click', async () =>
 });
 // End Main Menu Buttons
 
-function changeContent(contentElementId, navButtonId) {
-    //hidden all content
-    /*const main = document.getElementById("main-content")
-    main.querySelectorAll("[id^='content']").forEach(content => {
-        content.classList.add('hidden');
-    });*/
+//Init modal buttons
+document.getElementById('default-modal-button-cancel').addEventListener('click', () => {
+    document.getElementById('default-modal').classList.add('hidden');
+});
+
+document.getElementById('default-modal-button-accept').addEventListener('click', () => {
+    document.getElementById('default-modal').classList.add('hidden');
+});
+
+document.getElementById('default-modal-button-close').addEventListener('click', () => {
+    document.getElementById('default-modal').classList.add('hidden');
+});
+//End modal buttons
+
+async function changeContent(contentElementId, navButtonId) {
 
     //change css menu item buttons
     const navItems = document.getElementById('nav-item-list')
@@ -57,10 +66,6 @@ function changeContent(contentElementId, navButtonId) {
     });
 
     document.getElementById(navButtonId).className = 'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500';
-
-
-    //show only content from menu
-    //document.getElementById(contentElementId).classList.remove('hidden');
 
     if (contentElementId === 'content-shell-module') {
         document.getElementById('button-product-without-register').addEventListener('click', () => {
@@ -85,6 +90,63 @@ function changeContent(contentElementId, navButtonId) {
 
     if (contentElementId === 'content-products-module') {
         // Init Products Sub Content Buttons
+        const categories = await window.action.addProduct('get-categories', {});
+
+        if (!!categories) {
+            categories.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.id
+                optionElement.textContent = option.name
+                document.getElementById('input-new-product-category').appendChild(optionElement);
+            });
+
+        };
+
+        const inputPrice = document.getElementById('input-new-product-price');
+        const inputIva = document.getElementById('input-new-product-iva-amount');
+
+        inputPrice.addEventListener('input', () => {
+            const price = parseInt(inputPrice.value);
+            if (!isNaN(price)) {
+                inputIva.value = (price * 0.19).toFixed(2);
+            };
+        });
+
+        document.getElementById('add-category-button').addEventListener('click', async () => {
+            const content = document.getElementById('content');
+            content.innerHTML = await (await fetch('../category/content.html')).text();
+            changeContent('content-category-module', 'nav-item-category');
+        });
+
+
+        if (!!!categories.name) {
+            document.getElementById('section-add-category-button').classList.remove('hidden');
+        } else {
+            document.getElementById('section-add-category-button').classList.add('hidden');
+        }
+
+
+        let barcodeCheckbox = document.getElementById('checkbox-new-product-barcode-enable').checked;
+        let inventoryCheckbox = document.getElementById('checkbox-new-product-inventory-enable').checked;
+        document.getElementById('checkbox-new-product-barcode-enable').addEventListener('change', () => {
+            barcodeCheckbox = !barcodeCheckbox;
+            if (barcodeCheckbox) document.getElementById('container-barcode').classList.remove('hidden');
+            else document.getElementById('container-barcode').classList.add('hidden');
+
+        });
+
+        document.getElementById('checkbox-new-product-inventory-enable').addEventListener('change', () => {
+            inventoryCheckbox = !inventoryCheckbox;
+            if (inventoryCheckbox) {
+                document.getElementById('container-inventory-current-quantity').classList.remove('hidden');
+                document.getElementById('container-inventory-min-quantity').classList.remove('hidden');
+            }
+            else {
+                document.getElementById('container-inventory-current-quantity').classList.add('hidden');
+                document.getElementById('container-inventory-min-quantity').classList.add('hidden');
+            }
+        })
+
         document.getElementById('menu-button-new-product').addEventListener('click', () => {
             changeProductsContent('sub-content-add-new-product', 'menu-button-new-product');
         });
@@ -133,17 +195,17 @@ function changeContent(contentElementId, navButtonId) {
             newProduct = { ...newProduct, unitOfMeasurement };
         });
 
-        document.getElementById('add-product-button').addEventListener('click', (event) => {
+        document.getElementById('add-product-button').addEventListener('click', async (event) => {
             event.preventDefault();
 
             const productDescription = document.getElementById('input-new-product-description').value;
             const barcodeEnable = document.getElementById('checkbox-new-product-barcode-enable').checked;
             const barcode = document.getElementById('input-new-product-barcode').value;
             const priceNet = document.getElementById('input-new-product-price-net').value;
-            const price = document.getElementById('input-new-product-price').value;
+            const price = inputPrice.value;
             const wholesalePrice = document.getElementById('input-new-product-wholesale-price').value;
             const iva = document.getElementById('input-new-product-iva').value;
-            const ivaAmount = document.getElementById('input-new-product-iva-amount').value;
+            const ivaAmount = inputIva.value;
             const category = document.getElementById('input-new-product-category').value;
             const inventoryEnable = document.getElementById('checkbox-new-product-inventory-enable').checked;
             const quantity = document.getElementById('input-new-product-current-quantity').value;
@@ -165,22 +227,68 @@ function changeContent(contentElementId, navButtonId) {
                 minQuantity
             };
 
-            if (newProduct.unitOfMeasurement === undefined){
-                const targetModal = document.getElementById('default-modal');
-                if (targetModal) {
-                    targetModal.classList.toggle('hidden');
-                }
+            if (!!!newProduct.unitOfMeasurement){
+                modalErrorDescription('Error guardando Prodcuto','Se debe seleccionar una unidad de medidad para el nuevo producto');
                 return;
             };
 
-            window.action.addProduct('create-product', newProduct);
+            if (!!!newProduct.productDescription) {
+                modalErrorDescription('Error guardando Prodcuto','Se debe ingresar una descripción para el producto');
+                return;
+            };
+
+            if (!!!newProduct.priceNet) {
+                modalErrorDescription('Error guardando Prodcuto','Se debe ingresar el precio de costo del producto!');
+                return;
+            };
+
+            if (!!!newProduct.price) {
+                modalErrorDescription('Error guardando Prodcuto','Se debe ingresar el precio de venta del producto!');
+                return;
+            };
+
+            if (document.getElementById('checkbox-new-product-barcode-enable').checked){
+                if (!!!newProduct.barcode){
+                    modalErrorDescription('Error guardando Prodcuto','Se debe ingresar una valor para el código de barra');
+                    return;
+                }
+            }
+
+            if (document.getElementById('checkbox-new-product-inventory-enable').checked){
+                if (!!!newProduct.quantity){
+                    modalErrorDescription('Error guardando Prodcuto','Se debe ingresar una valor para la cantidad del inventario');
+                    return;
+                }
+                if (!!!newProduct.minQuantity){
+                    modalErrorDescription('Error guardando Prodcuto', 'Se debe ingresar una valor para la cantidad minima del inventario');
+                    return;
+                }
+            }
+
+            const productResult = await window.action.addProduct('create-product', newProduct);
+            console.log(productResult);
+            if (!!productResult) {
+                document.getElementById('input-new-product-description').value = '';
+                document.getElementById('checkbox-new-product-barcode-enable').checked = true;
+                document.getElementById('input-new-product-barcode').value = '';
+                document.getElementById('input-new-product-price-net').value = '';
+                inputPrice.value = true;
+                document.getElementById('input-new-product-wholesale-price').value = '';
+                inputIva.value = '';
+                document.getElementById('input-new-product-category').value = '';
+                document.getElementById('checkbox-new-product-inventory-enable').checked = true;
+                document.getElementById('input-new-product-current-quantity').value = '';
+                document.getElementById('input-new-product-min-quantity').value = '';
+
+                modalErrorDescription('Correcto','Producto creado correctamente!');
+            };
         });
         // End Products Sub Content Buttons
     };
     if (contentElementId === 'content-products-module') {
 
     }
-};
+}
 
 function changeProductsContent(subContentProduct, buttonProductId) {
     //hidden all content
@@ -199,4 +307,13 @@ function changeProductsContent(subContentProduct, buttonProductId) {
 
     //show only content from menu
     document.getElementById(subContentProduct).classList.remove('hidden');
+};
+
+function modalErrorDescription(title, errorDescription) {
+    const targetModal = document.getElementById('default-modal');
+    if (targetModal) {
+        targetModal.classList.toggle('hidden');
+        document.getElementById('default-modal-title').innerText = title;
+        document.getElementById('default-modal-text').innerText = errorDescription;
+    }
 }

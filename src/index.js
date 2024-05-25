@@ -1,6 +1,7 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const { createDataBase, closeDataBase } = require('./database/sqlite_client');
 const { create_product_controller } = require('./controllers/product/create_product_controller/create_product_controller');
+const { get_categories_controller } = require('./controllers/category/get_categories_controller/get_categories_controller');
 const path = require('node:path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -45,13 +46,16 @@ const createWindow = () => {
   });
 
   //create module
-  ipcMain.on('crud-operations', ({}, operation, data) => {
+  ipcMain.handle('crud-operations', ({}, operation, data) => {
     switch (operation) {
       case 'create-product':
-        create_product_controller(data)
-            .then(r => console.log('product created successfully'))
+        return create_product_controller(data)
+            .then(r => r)
             .catch(e => console.error('error creating product', e));
-        break;
+      case 'get-categories':
+        return get_categories_controller()
+            .then(r => r)
+            .catch(e => console.log('error getting categories', e))
     }
   });
 

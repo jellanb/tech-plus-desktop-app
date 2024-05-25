@@ -4,18 +4,17 @@ const error = require("../../common/error");
 const tableName = 'product';
 
 async function createProduct(productData) {
-
     let newProduct = {
-        description: productData.productDescription,
-        barcode_enable: productData.barcodeEnable,
-        unit_of_measurement: productData.unitOfMeasurement,
+        description: productData.description,
+        barcode_enable: productData.barcode_enable,
+        unit_of_measurement: productData.unit_of_measurement,
         barcode: productData.barcode,
         quantity: productData.quantity,
-        net_price: productData.priceNet,
+        net_price: productData.net_price,
         price: productData.price,
-        wholesale_price: productData.wholesalePrice,
-        discount_enable: false,
-        id_category: 0,//TODO: find this value productData.id_category,
+        wholesale_price: productData.wholesale_price,
+        discount_enable: productData.discount_enable,
+        id_category: productData.id_category,//TODO: find this value productData.id_category,
         discount_unique_id: 0,//productData.discount_unique_id,
         discount_pack_id: 0,//productData.discount_pack_id,
         discount_bundle_id: 0 // productData.discount_bundle_id
@@ -25,6 +24,8 @@ async function createProduct(productData) {
     if (result != undefined) {
         throw result.error;
     };
+
+    return result;
 }
 
 function updateProductByDescription(productData) {
@@ -53,7 +54,7 @@ function updateProductByDescription(productData) {
 function getProductByDescription(productData) {
     const condition = `description = ${productData.description}`;
 
-    createSelectQuery(tableName, condition);
+    return createSelectQuery(tableName, condition);
 }
 
 function deleteProductByDescription(tableName, productData) {
